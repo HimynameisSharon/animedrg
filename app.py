@@ -13,11 +13,13 @@ app.register_blueprint(heartbeat_bp)
 app.register_blueprint(ingest_bp)
 app.register_blueprint(measurements_bp)
 
-@app.route('/')
-def health_check():
-    """Checks the system health and database connectivity"""
+@app.route("/")
+def index():
+    return {"message": "ANiMeDRig backend is running"}, 200
+
+@app.route("/test-db")
+def test_db():
     try:
-        # This confirms that the backend can talk to your Supabase 'devices' table
         result = supabase.table("devices").select("*").execute()
         return {"status": "Supabase connected", "data": result.data}, 200
     except Exception as e:

@@ -8,6 +8,7 @@ from routes.measurements import measurements_bp
 app = Flask(__name__)
 CORS(app)
 
+# Register blueprints to handle different API routes
 app.register_blueprint(heartbeat_bp)
 app.register_blueprint(ingest_bp)
 app.register_blueprint(measurements_bp)
@@ -25,4 +26,5 @@ def test_db():
         return {"status": "error", "message": str(e)}, 500
 
 if __name__ == "__main__":
+    # ADDED host="0.0.0.0" so the Raspberry Pi can connect without the long command
     app.run(debug=True, host="0.0.0.0", port=5000)

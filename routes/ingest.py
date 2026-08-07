@@ -29,41 +29,37 @@ def ingest():
         print("📥 Incoming Raw Payload:", data, flush=True)
         print("==========================================\n", flush=True)
 
-        # 1. Extract payload dictionary (handles flat or nested {"payload": {...}})
+        # Extract raw payload
         raw_payload = data.get("payload", data)
 
-        # 2. Field Extraction & Fallbacks
+        # Extract metric values with fallbacks
         bw = raw_payload.get("weight_kg") or raw_payload.get("bw") or raw_payload.get("weight") or 0.0
-        avg_temp = raw_payload.get("temp_c") or raw_payload.get("avg_temp") or raw_payload.get("temp") or 0.0
+        temp = raw_payload.get("temp_c") or raw_payload.get("avg_temp") or raw_payload.get("temp") or 0.0
         confidence = raw_payload.get("confidence_score") if raw_payload.get("confidence_score") is not None else raw_payload.get("confidence", 0.95)
-        
         animal_type = raw_payload.get("animal_type") or "chicken"
 
+        # Clean payload mapping explicitly matching active Supabase columns
         mapped_data = {
             "device_id": str(data.get("device_info", {}).get("id") or data.get("device_id") or "Jetson-01"),
-            "tag_no": str(raw_payload.get("tag_no") or raw_payload.get("tag") or "TAG-001"),
             "animal_type": str(animal_type),
-            "bw": float(bw),
-            "avg_temp": float(avg_temp),
             "weight_kg": float(bw),
-            "temp_c": float(avg_temp),
+            "temp_c": float(temp),
             "humidity_pct": raw_payload.get("humidity_pct") or raw_payload.get("humidity"),
             "confidence_score": float(confidence),
-            # Dimensions mapping
             "length_cm": raw_payload.get("length_cm"),
             "breadth_cm": raw_payload.get("breadth_cm"),
             "height_cm": raw_payload.get("height_cm"),
-            #"area_cm2": raw_payload.get("area_cm2"),
-            # Light & Disease status mapping
             "light_pct": raw_payload.get("light_pct"),
-           # "disease_status": raw_payload.get("disease_status"),
-            #"disease_confidence": raw_payload.get("disease_confidence"),
             "created_at": datetime.now(timezone.utc).isoformat()
         }
 
+        # Safely append optional fields only if provided in raw_payload to prevent PGRST204 schema errors
+        if raw_payload.get("tag_no") or raw_payload.get("tag"):
+            mapped_data["tag_no"] = str(raw_payload.get("tag_no") or raw_payload.get("tag"))
+
         print("⚙️ Mapped Payload for Supabase:", mapped_data, flush=True)
 
-        # 3. Insert into Supabase
+        # Insert into Supabase
         if supabase:
             response = supabase.table("measurements").insert(mapped_data).execute()
             

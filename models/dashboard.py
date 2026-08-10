@@ -11,12 +11,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# Absolute File Paths
-BASE_PROJECT_DIR = r"C:\Projects"
-CSV_PATH = os.path.join(BASE_PROJECT_DIR, "data", "chicken_dataset_real.csv")
-MODEL_PATH = os.path.join(BASE_PROJECT_DIR, "animedrg", "ml_models", "models", "chicken_health_model.pkl")
+import os
 
-@st.cache_data(ttl=2)
+# Directory where dashboard.py is located (animedrg/models/)
+MODELS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Repository root (animedrg/)
+REPO_ROOT = os.path.dirname(MODELS_DIR)
+
+# Relative Paths
+CSV_PATH = os.path.join(MODELS_DIR, "chicken_dataset_real.csv")
+MODEL_PATH = os.path.join(REPO_ROOT, "ml_models", "models", "chicken_health_model.pkl")@st.cache_data(ttl=2)
 def fetch_data():
     if not os.path.exists(CSV_PATH):
         st.error(f"Dataset missing at: {CSV_PATH}")

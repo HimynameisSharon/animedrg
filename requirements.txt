@@ -1,5 +1,7 @@
-flask
-supabase
 streamlit
 plotly
 pandas
+supabase
+flask
+scikit-learn
+joblib

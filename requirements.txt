@@ -5,3 +5,4 @@ supabase
 flask-cors
 scikit-learn
 joblib
+python-dotenv

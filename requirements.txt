@@ -2,6 +2,6 @@ streamlit
 plotly
 pandas
 supabase
-flask
+flask-cors
 scikit-learn
 joblib

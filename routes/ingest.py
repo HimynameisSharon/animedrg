@@ -46,10 +46,18 @@ def ingest():
             "temp_c": float(temp),
             "humidity_pct": raw_payload.get("humidity_pct") or raw_payload.get("humidity"),
             "confidence_score": float(confidence),
-            "length_cm": raw_payload.get("length_cm"),
-            "breadth_cm": raw_payload.get("breadth_cm"),
-            "height_cm": raw_payload.get("height_cm"),
-            "light_pct": raw_payload.get("light_pct"),
+            
+            
+            # Dual-Camera Streaming Metrics (Top & Side Cameras + Chest Gap)
+            "length1_cm": raw_payload.get("length1_cm"),
+            "breadth1_cm": raw_payload.get("breadth1_cm"),
+            "area1_cm2": raw_payload.get("area1_cm2"),
+            "length2_cm": raw_payload.get("length2_cm"),
+            "height1_cm": raw_payload.get("height1_cm"),
+            "height2_cm": raw_payload.get("height2_cm"),
+            "area2_cm2": raw_payload.get("area2_cm2"),
+            "chest_gap_cm": raw_payload.get("chest_gap_cm"),
+            
             "created_at": datetime.now(timezone.utc).isoformat()
         }
 
